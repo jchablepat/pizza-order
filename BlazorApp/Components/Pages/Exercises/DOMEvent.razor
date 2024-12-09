@@ -1,0 +1,21 @@
+﻿@page "/dom-events"
+@rendermode InteractiveServer
+@inject IJSRuntime JS
+                                                                        
+<input value=@data @onkeypress="ProcessKeyPress" @onkeypress:preventDefault />
+
+@code {
+	private string data;
+
+	private async Task ProcessKeyPress(KeyboardEventArgs e)
+	{
+		if (e.Key == "@")
+		{
+			await JS.InvokeVoidAsync("alert", "You pressed @");
+		}
+		else
+		{
+			data += e.Key.ToUpper();
+		}
+	}
+}

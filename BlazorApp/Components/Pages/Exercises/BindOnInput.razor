@@ -1,0 +1,13 @@
+﻿@page "/bind-input"
+@rendermode InteractiveServer
+
+<h1>My favorite pizza is: @favPizza</h1>
+
+<p>
+	Enter your favorite pizza:
+	<input @bind-value="favPizza" @bind-value:event="oninput" />
+</p>
+
+@code {
+	private string favPizza { get; set; } = "Margherita";
+}

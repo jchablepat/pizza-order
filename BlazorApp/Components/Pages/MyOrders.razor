@@ -1,0 +1,58 @@
+﻿@page "/myorders"
+@using BlazorApp.Components.Models
+@using BlazorApp.Components.Shared
+@inject HttpClient HttpClient
+@inject NavigationManager NavigationManager
+@rendermode InteractiveServer
+
+<div class="main">
+    @if (ordersWithStatus == null)
+    {
+        <text>Loading...</text>
+    }
+    else if (!ordersWithStatus.Any())
+    {
+        <h2>No orders placed</h2>
+        <a class="btn btn-success" href="">Ordenar una pizza</a>
+    }
+    else
+    {
+		<PaginationComponent TItem="OrderWithStatus"
+	        Items="ordersWithStatus.OrderBy(o => o.Order.CreatedTime).ToList()"
+	        ItemLabel='item => new($"{item.Order.CreatedTime:dd/MM/yyyy}")'>
+	        <ItemContent>
+				<div class="list-group-item bg-secondary text-white">
+			        <div class="list-group-item">
+				        <div class="col">
+					        <h5>@context.Order.CreatedTime.ToLongDateString()</h5>
+					        Pizzas: <strong>@context.Order.Pizzas.Count()</strong>;
+							Precio Total: <strong>£@context.Order.GetFormattedTotalPrice()</strong>
+				        </div>
+
+				        <div class="col">
+							Estatus: <strong>@context.StatusText</strong>
+				        </div>
+
+						@if (@context.StatusText != "Delivered")
+				        {
+					        <div class="col flex-grow-0">
+								<a href="myorders/@context.Order.OrderId" class="btn btn-success">
+							        Monitorear &gt;
+						        </a>
+					        </div>
+				        }
+			        </div>
+		        </div>
+	        </ItemContent>
+        </PaginationComponent>
+    }
+</div>
+
+@code {
+    List<OrderWithStatus>? ordersWithStatus = [];
+
+    protected override async Task OnParametersSetAsync()
+    {
+        ordersWithStatus = await HttpClient.GetFromJsonAsync<List<OrderWithStatus>>($"{NavigationManager.BaseUri}api/orders");
+    }
+}

@@ -1,0 +1,32 @@
+﻿@inherits LayoutComponentBase
+
+@* <div class="page"> *@
+@*     <div class="sidebar">
+        <NavMenu />
+    </div> *@
+
+
+    <div id="app">
+	    @*         <div class="top-row px-4">
+            <a href="https://learn.microsoft.com/aspnet/core/" target="_blank">About</a>
+        </div> *@
+		
+	    <Navbar />
+
+	    <div class="content px-4">
+		    @Body
+	    </div>
+		
+	    <footer class="px-4 py-2 text-center">
+		    &copy; Blazing Pizza @DateTime.UtcNow.Year
+	    </footer>
+    </div>
+
+
+@* </div> *@
+
+<div id="blazor-error-ui">
+    An unhandled error has occurred.
+    <a href="" class="reload">Reload</a>
+    <a class="dismiss">🗙</a>
+</div>

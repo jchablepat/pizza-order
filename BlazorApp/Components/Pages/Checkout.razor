@@ -1,0 +1,76 @@
+﻿@page "/checkout"
+@using BlazorApp.Components.Models
+@using BlazorApp.Components.Shared
+@using BlazorApp.Services
+@inject OrderState OrderState
+@inject HttpClient HttpClient
+@inject NavigationManager NavigationManager
+@implements IDisposable
+@rendermode InteractiveServer
+
+<div class="main">
+	<EditForm EditContext="editContext" OnValidSubmit="PlaceOrder" OnInvalidSubmit=ShowError>
+		<div class="checkout-cols">
+			<div class="checkout-order-details">
+				<h4>Revisión de orden</h4>
+				<OrderReview Order="Order"/>
+			</div>
+
+			<div class="checkout-delivery-address">
+				<h4>Entregar a...</h4>
+				<AddressEditor Address="Order.DeliveryAddress" />
+
+				<button class="checkout-button btn btn-warning" type="submit" disabled="@isError">
+					Realizar pedido
+				</button>
+			</div>
+		</div>
+
+		@* <ValidationSummary /> *@
+		<DataAnnotationsValidator/>
+	</EditForm>
+</div>
+
+@code {
+	Order Order => OrderState.Order;
+
+	private EditContext? editContext;
+	bool isError = false;
+
+	protected override void OnInitialized()
+	{
+		editContext = new EditContext(Order.DeliveryAddress);
+		editContext.OnFieldChanged += HandleFieldChanged;
+	}
+
+	private void HandleFieldChanged(object sender, FieldChangedEventArgs e)
+	{
+		isError = editContext?.Validate() is false;
+		StateHasChanged();
+	}
+
+	public void Dispose()
+	{
+		if (editContext is null) return;
+		editContext.OnFieldChanged -= HandleFieldChanged;
+	}
+
+	async Task PlaceOrder() {
+		try {
+			var response = await HttpClient.PostAsJsonAsync(NavigationManager.BaseUri + "api/orders", Order);
+			var newOrderId = await response.Content.ReadFromJsonAsync<int>();
+
+			OrderState.ResetOrder();
+			NavigationManager.NavigateTo($"/myorders/{newOrderId}");
+		}
+		catch (Exception e)
+		{
+			Console.WriteLine(e);
+		}
+	}
+
+	protected void ShowError()
+	{
+		isError = true;
+	}
+}

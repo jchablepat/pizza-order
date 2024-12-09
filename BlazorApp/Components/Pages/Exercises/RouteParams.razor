@@ -1,0 +1,29 @@
+﻿@page "/FavoritePizzas/{*Favorites}"
+@* @page "/FavoritePizzas/{FavoriteSize:int}" *@
+
+<h1>Choose a Pizza</h1>
+
+<p>Your favorite pizza is: @Favorites</p>
+@* <p>Your favorite pizza size is: @FavoriteSize inches.</p> *@
+
+@code {
+	// Puede obtener el valor de un parámetro de ruta de la misma manera que obtendría el
+	// valor de un parámetro de componente.
+	// Los parámetros de ruta no distinguen mayúsculas de minúsculas
+	// y se reenvían a un parámetro de componente con el mismo nombre
+	// ? Indica que el valor del parámetro de ruta es opcional, pero debe
+	// establecerse un valor predeterminado
+	// Anteponga un asterisco (*) al nombre del parámetro de ruta para convertirlo en comodín
+	// y captura las rutas de acceso a través de varios límites de carpeta de URI (barras diagonales)
+
+	[Parameter]
+	public string Favorites { get; set; }
+
+	[Parameter]
+	public int FavoriteSize { get; set; }
+
+	protected override void OnInitialized()
+	{
+		Favorites ??= "Hawaina";
+	}
+}
