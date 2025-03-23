@@ -1,4 +1,6 @@
-﻿@typeparam TItem
+﻿@* This allows the component to be generic, meaning it can work with any data type (TItem) *@
+@typeparam TItem 
+
 
 <div class="container-sm py-4">
 	@ItemContent(Items.ElementAt(selectedIndex))
@@ -20,7 +22,6 @@
 			var isActive = index == selectedIndex;
 			<li class="page-item @(isActive ? "active" :"")">
 				<a class="page-link" @onclick="@(() => SetIndex(index))">
-					@* @ItemLabel(item) *@
 					@(index + 1)
 				</a>
 			</li>
@@ -37,6 +38,7 @@
 </nav>
 
 @code {
+	// This is a collection of data(IEnumerable, List) passed into the component.
 	[Parameter, EditorRequired]
 	public required List<TItem> Items { get; set; }
 
@@ -46,15 +48,14 @@
 	[Parameter, EditorRequired]
 	public required Func<TItem, MarkupString> ItemLabel { get; set; }
 
-	int selectedIndex;
+	private int selectedIndex;
 
 	bool previousDisabled => selectedIndex == 0;
 	bool nextDisabled => selectedIndex == Items.Count - 1;
 
-	void IncrementIndex() => selectedIndex++;
-	void DecrementIndex() => selectedIndex--;
-	void SetIndex(int index) => selectedIndex = index;
+	private void IncrementIndex() => selectedIndex++;
+	private void DecrementIndex() => selectedIndex--;
+	private void SetIndex(int index) => selectedIndex = index;
 
-	protected override void OnInitialized() =>
-		selectedIndex = Items.Count - 1;
+	protected override void OnInitialized() => selectedIndex = Items.Count - 1;
 }

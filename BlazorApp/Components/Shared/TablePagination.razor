@@ -1,0 +1,90 @@
+﻿@* This allows the component to be generic, meaning it can work with any data type (TItem) *@
+@typeparam TItem
+
+<div>
+	<table class="table table-bordered">
+		<thead>
+			@ChildContentHeader
+		</thead>
+		<tbody>
+			@foreach (var item in PaginatedData)
+			{
+				@ChildContentRow(item)
+			}
+		</tbody>
+	</table>
+
+	<div class="pagination-controls">
+		<!-- Page Size Dropdown -->
+		<label for="pageSize">Páginas: </label>
+		<select @bind="PageSize" id="pageSize">
+			@foreach (var size in PageSizes)
+			{
+				<option value="@size">@size</option>
+			}
+		</select>
+
+		<!-- Previous Page Button -->
+		<button @onclick="PreviousPage" disabled="@IsPreviousDisabled">Anterior</button>
+
+		<!-- Page Number Buttons -->
+		@foreach (var pageNumber in Enumerable.Range(1, TotalPages))
+		{
+			<button @onclick="() => GoToPage(pageNumber)" class="@(CurrentPage == pageNumber ? "active" : "")">
+				@pageNumber
+			</button>
+		}
+
+		<!-- Next Page Button -->
+		<button @onclick="NextPage" disabled="@IsNextDisabled">Siguiente</button>
+	</div>
+</div>
+
+@code {
+	// This is a collection of data(IEnumerable, List) passed into the component.
+	[Parameter, EditorRequired]
+	public required List<TItem> Items { get; set; }
+
+	[Parameter] public int DefaultPageSize { get; set; } = 10;
+	// This is a render fragment for the table header
+	[Parameter] public required RenderFragment ChildContentHeader { get; set; }
+	// This is a render fragment for each row of data
+	[Parameter] public required RenderFragment<TItem> ChildContentRow { get; set; }
+
+	private int PageSize { get; set; }
+	private List<TItem> PaginatedData => Items.Skip((CurrentPage - 1) * PageSize).Take(PageSize).ToList();
+	private int CurrentPage { get; set; } = 1;
+
+	private readonly int[] PageSizes = new[] { 5, 10, 20, 50 };
+
+	protected override void OnInitialized()
+	{
+		PageSize = DefaultPageSize;
+	}
+
+	private void NextPage()
+	{
+		if (CurrentPage < TotalPages)
+		{
+			CurrentPage++;
+		}
+	}
+
+	private void PreviousPage()
+	{
+		if (CurrentPage > 1)
+		{
+			CurrentPage--;
+		}
+	}
+
+	private void GoToPage(int pageNumber)
+	{
+		CurrentPage = pageNumber;
+	}
+
+	private int TotalPages => (int)Math.Ceiling(Items.Count() / (double)PageSize);
+
+	private bool IsPreviousDisabled => CurrentPage == 1;
+	private bool IsNextDisabled => CurrentPage == TotalPages;
+}

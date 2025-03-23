@@ -6,27 +6,48 @@
 @rendermode InteractiveServer
 
 <div class="main">
-    @if (ordersWithStatus == null)
+    @if (orders == null)
     {
         <text>Loading...</text>
     }
-    else if (!ordersWithStatus.Any())
+    else if (!orders.Any())
     {
         <h2>No orders placed</h2>
         <a class="btn btn-success" href="">Ordenar una pizza</a>
     }
     else
     {
+        <h3>Ordenes</h3>
+@* 		 <TablePagination TItem="OrderWithStatus" Items="orders.OrderBy(o => o.Order.CreatedTime).ToList()" DefaultPageSize="10">
+            <ChildContentHeader>
+                <tr>
+                    <th>Cantidad</th>
+                    <th>Precio Total</th>
+                    <th>Estado</th>
+                    <th>Fecha</th>
+                </tr>
+            </ChildContentHeader>
+            <ChildContentRow Context="item">
+                <tr>
+                    <td>@item.Order.Pizzas.Count()</td>
+                    <td>@item.Order.GetFormattedTotalPrice()</td>
+                    <td>@item.StatusText</td>
+                    <td>@item.Order.CreatedTime</td>
+                </tr>
+            </ChildContentRow>
+        </TablePagination> *@
+
 		<PaginationComponent TItem="OrderWithStatus"
-	        Items="ordersWithStatus.OrderBy(o => o.Order.CreatedTime).ToList()"
-	        ItemLabel='item => new($"{item.Order.CreatedTime:dd/MM/yyyy}")'>
-	        <ItemContent>
+	        Items="orders.OrderBy(o => o.Order.CreatedTime).ToList()"
+	        ItemLabel='item => new($"{item.Order.CreatedTime:dd/MM/yyyy}")'
+        >
+	        <ItemContent Context="context">
 				<div class="list-group-item bg-secondary text-white">
 			        <div class="list-group-item">
 				        <div class="col">
 					        <h5>@context.Order.CreatedTime.ToLongDateString()</h5>
-					        Pizzas: <strong>@context.Order.Pizzas.Count()</strong>;
-							Precio Total: <strong>£@context.Order.GetFormattedTotalPrice()</strong>
+					        Pizzas: <strong>@context.Order.Pizzas.Count()</strong><br />
+							Precio Total: <strong>$@context.Order.GetFormattedTotalPrice()</strong>
 				        </div>
 
 				        <div class="col">
@@ -49,10 +70,10 @@
 </div>
 
 @code {
-    List<OrderWithStatus>? ordersWithStatus = [];
+    private List<OrderWithStatus>? orders = [];
 
     protected override async Task OnParametersSetAsync()
     {
-        ordersWithStatus = await HttpClient.GetFromJsonAsync<List<OrderWithStatus>>($"{NavigationManager.BaseUri}api/orders");
+        orders = await HttpClient.GetFromJsonAsync<List<OrderWithStatus>>($"{NavigationManager.BaseUri}api/orders");
     }
 }

@@ -166,7 +166,7 @@ h1:focus {
     }
 
 .price::before {
-    content: "£";
+    content: "$";
     font-weight: 300;
     font-size: 1.2rem;
     margin-right: 0.2rem;
@@ -412,7 +412,7 @@ input[type=range] {
     }
 
         .order-total .total-price::before {
-            content: "£";
+            content: "$";
             font-weight: 300;
             margin: 0 0.1rem 0 0.4rem;
         }
@@ -461,7 +461,7 @@ input[type=range] {
 }
 
     .item-price::before {
-        content: "£";
+        content: "$";
         font-weight: 100;
         margin-right: 0.3rem;
     }
@@ -619,4 +619,9 @@ input[type=range] {
 
 .page-item disabled {
     cursor: not-allowed;
+}
+
+.disabled {
+    cursor: not-allowed;
+    opacity: 0.5;
 }

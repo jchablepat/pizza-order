@@ -18,13 +18,13 @@
 			}
 
 			<span class="size-label">
-					@(Pizza.Size)" (£@(Pizza.GetFormattedTotalPrice()))
+					@(Pizza.Size)" ($@(Pizza.GetFormattedTotalPrice()))
 				</span>
 			</div>
 		</form>
 
 		<div class="dialog-buttons">
-			<button class="btn btn-secondary mr-auto" @onclick="OnCancel">Cancelar</button>
+			<button class="btn btn-danger mr-auto" @onclick="OnCancel">Cancelar</button>
 			<span class="mr-center">
 				Precio: <span class="price">@(Pizza.GetFormattedTotalPrice())</span>
 			</span>
@@ -34,7 +34,7 @@
 </div>
 
 @code {
-	[Parameter] public Pizza Pizza { get; set; }
+	[Parameter, EditorRequired] public required Pizza Pizza { get; set; }
 	[Parameter] public EventCallback OnCancel { get; set; }
 	[Parameter] public EventCallback OnConfirm { get; set; }
 
